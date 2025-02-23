@@ -14,26 +14,20 @@ SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
 
 def check_availability():
-    print("Checking availability...")  # Debugging
     response = requests.get(URL)
     soup = BeautifulSoup(response.text, 'html.parser')
 
-    # Debugging: Print out part of the page
-    print("Page content received. Searching for availability...")
-
-    availability_section = soup.find("div", class_="apartment-availability")
-
-    if availability_section:
-        print("Found availability section:", availability_section.text.strip())
-    else:
-        print("Availability section not found.")
-
-    if availability_section and "available" in availability_section.text.lower():
-        print("Room is available!")
-        return True
-    else:
+    # Locate the element indicating no availability
+    no_offer_section = soup.find("div", class_="room-type-information-no-offer")
+    
+    # If this element exists, it means rooms are NOT available
+    if no_offer_section:
         print("No rooms available.")
-        return False
+        return False  # No availability
+
+    # If the no-offer section is missing, assume rooms are available
+    print("Rooms might be available!")
+    return True  # Availability detected
 
 def send_email():
     print("Sending email notification...")
