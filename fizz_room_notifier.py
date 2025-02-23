@@ -17,12 +17,14 @@ def check_availability():
     response = requests.get(URL)
     soup = BeautifulSoup(response.text, 'html.parser')
 
-    # Check for the specific text indicating no availability
-    if "There are no Single rooms available right now" in soup.get_text():
+    # Find the "no rooms available" message by targeting the div class
+    no_rooms = soup.find("div", class_="room-type-information-no-offer")
+    
+    if no_rooms:
         print("No rooms available.")
         return False  # Rooms are NOT available
 
-    # If that text is missing, assume rooms are available
+    # If that div is missing, assume rooms are available
     print("Rooms are available!")
     return True
 
