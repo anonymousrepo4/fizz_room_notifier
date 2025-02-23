@@ -17,17 +17,21 @@ def check_availability():
     response = requests.get(URL)
     soup = BeautifulSoup(response.text, 'html.parser')
 
-    # Locate the element indicating no availability
+    # Check for the "no offer" section (which means rooms are NOT available)
     no_offer_section = soup.find("div", class_="room-type-information-no-offer")
-    
-    # If this element exists, it means rooms are NOT available
     if no_offer_section:
         print("No rooms available.")
-        return False  # No availability
+        return False  # Rooms are NOT available
 
-    # If the no-offer section is missing, assume rooms are available
-    print("Rooms might be available!")
-    return True  # Availability detected
+    # Check if there's an explicit "available" section (adjust based on the website's structure)
+    available_section = soup.find("div", class_="room-type-information-available")  # Replace with actual class if needed
+    if available_section:
+        print("Rooms are available!")
+        return True  # Rooms are available
+
+    # If neither "no offer" nor "available" section is found, assume no availability
+    print("Unclear availability status. Assuming no rooms available.")
+    return False
 
 def send_email():
     print("Sending email notification...")
